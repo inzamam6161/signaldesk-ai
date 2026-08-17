@@ -1,6 +1,6 @@
 # SignalDesk AI
 
-A compact AI customer-intelligence dashboard built to showcase senior React and frontend engineering skills.
+SignalDesk is a customer-intelligence dashboard built with Next.js, React and TypeScript. Its current analysis route uses deterministic processing and simulates an external AI provider; production model integration is planned.
 
 ## Highlights
 
