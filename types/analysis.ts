@@ -17,4 +17,12 @@ export interface AnalysisResult {
   priority: "Low" | "Medium" | "High";
   confidence: number;
   generatedAt: string;
+  topTopic: string;
+  counts: {
+    total: number;
+    positive: number;
+    neutral: number;
+    negative: number;
+  };
+  evidence: string[];
 }

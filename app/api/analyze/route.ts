@@ -1,14 +1,16 @@
 import { NextResponse } from "next/server";
 
+import { analyzeFeedback } from "@/lib/analyzeFeedback";
 import type {
   AnalysisRequest,
-  AnalysisResult,
+  AnalysisFeedbackInput,
 } from "@/types/analysis";
 
-const wait = (milliseconds: number) =>
-  new Promise((resolve) => {
-    setTimeout(resolve, milliseconds);
-  });
+const validSentiments = new Set([
+  "positive",
+  "neutral",
+  "negative",
+]);
 
 export async function POST(request: Request) {
   try {
@@ -27,10 +29,13 @@ export async function POST(request: Request) {
 
     const validFeedback = body.feedback
       .filter(
-        (item) =>
-          typeof item.message === "string" &&
+        (item): item is AnalysisFeedbackInput =>
+          typeof item?.message === "string" &&
           item.message.trim().length > 0 &&
-          typeof item.score === "number",
+          typeof item.score === "number" &&
+          Number.isFinite(item.score) &&
+          typeof item.sentiment === "string" &&
+          validSentiments.has(item.sentiment),
       )
       .slice(0, 100);
 
@@ -45,60 +50,9 @@ export async function POST(request: Request) {
       );
     }
 
-    // Simulates processing time from an external AI provider.
-    await wait(900);
-
-    const negativeCount = validFeedback.filter(
-      (item) => item.sentiment === "negative",
-    ).length;
-
-    const notificationMentions = validFeedback.filter((item) =>
-      item.message.toLowerCase().includes("notification"),
-    ).length;
-
-    const negativePercentage =
-      negativeCount / validFeedback.length;
-
-    const priority: AnalysisResult["priority"] =
-      negativePercentage >= 0.3
-        ? "High"
-        : negativePercentage >= 0.15
-          ? "Medium"
-          : "Low";
-
-    const averageConfidence = Math.round(
-      validFeedback.reduce(
-        (total, feedback) => total + feedback.score,
-        0,
-      ) / validFeedback.length,
+    return NextResponse.json(
+      analyzeFeedback(validFeedback),
     );
-
-    const hasNotificationIssue = notificationMentions > 0;
-
-    const result: AnalysisResult = {
-      title: hasNotificationIssue
-        ? "Improve mobile notifications"
-        : negativeCount > 0
-          ? "Reduce customer friction"
-          : "Maintain customer satisfaction",
-      summary: hasNotificationIssue
-        ? "The latest server analysis confirms that mobile notification delays remain the highest-impact issue. Android users are most affected during peak usage periods."
-        : negativeCount > 0
-          ? "Several conversations contain signs of customer friction. The support and product teams should review the negative feedback and create targeted follow-up actions."
-          : "Customer sentiment remains healthy. Positive feedback is mainly connected to performance improvements and time saved through AI-assisted workflows.",
-      mentions:
-        230 +
-        validFeedback.length * 7 +
-        notificationMentions * 11,
-      priority,
-      confidence: Math.min(
-        98,
-        Math.max(75, averageConfidence),
-      ),
-      generatedAt: new Date().toISOString(),
-    };
-
-    return NextResponse.json(result);
   } catch {
     return NextResponse.json(
       {

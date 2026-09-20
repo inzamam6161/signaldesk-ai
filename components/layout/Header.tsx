@@ -1,27 +1,59 @@
+import type { DashboardView } from "@/types/dashboard";
+
 interface HeaderProps {
+  activeView: DashboardView;
   searchQuery: string;
   theme: "dark" | "light";
   onSearchChange: (value: string) => void;
   onOpenCommandPalette: () => void;
   onToggleTheme: () => void;
   onExport: () => void;
+  onAddFeedback: () => void;
 }
 
+const viewCopy: Record<
+  DashboardView,
+  { eyebrow: string; title: string; description: string }
+> = {
+  overview: {
+    eyebrow: "Customer intelligence",
+    title: "Customer overview",
+    description:
+      "Understand sentiment, risks and recurring themes from the current workspace.",
+  },
+  feedback: {
+    eyebrow: "Feedback workspace",
+    title: "Customer conversations",
+    description:
+      "Search, filter, add and track customer feedback in one place.",
+  },
+  insights: {
+    eyebrow: "Evidence-based insights",
+    title: "What needs attention",
+    description:
+      "Generate transparent analysis from the conversations currently in view.",
+  },
+};
+
 export function Header({
+  activeView,
   searchQuery,
   theme,
   onSearchChange,
   onOpenCommandPalette,
   onToggleTheme,
   onExport,
+  onAddFeedback,
 }: HeaderProps) {
+  const copy = viewCopy[activeView];
+
   return (
     <header className="header">
       <div>
-        <p className="eyebrow">AI customer intelligence</p>
-        <h1>Good morning, Inzamamul</h1>
+        <p className="eyebrow">{copy.eyebrow}</p>
+        <h1>{copy.title}</h1>
         <p className="headerDescription">
-          Here is what your customers are saying today.
+          {copy.description}
         </p>
       </div>
 
@@ -31,7 +63,9 @@ export function Header({
 
           <input
             aria-label="Search customer feedback"
-            onChange={(event) => onSearchChange(event.target.value)}
+            onChange={(event) =>
+              onSearchChange(event.target.value)
+            }
             placeholder="Search feedback..."
             type="search"
             value={searchQuery}
@@ -46,6 +80,14 @@ export function Header({
             ⌘ K
           </button>
         </label>
+
+        <button
+          className="headerAddButton"
+          onClick={onAddFeedback}
+          type="button"
+        >
+          + Add feedback
+        </button>
 
         <button
           aria-label="Export filtered feedback"
@@ -69,16 +111,14 @@ export function Header({
           {theme === "dark" ? "☀" : "☾"}
         </button>
 
-        <button className="profileButton" type="button">
-          <span className="profileAvatar">IH</span>
+        <div className="profileButton" aria-label="Demo workspace">
+          <span className="profileAvatar">DW</span>
 
           <span className="profileDetails">
-            <strong>Inzamamul</strong>
-            <small>Administrator</small>
+            <strong>Demo Workspace</strong>
+            <small>Product Team</small>
           </span>
-
-          <span aria-hidden="true">⌄</span>
-        </button>
+        </div>
       </div>
     </header>
   );

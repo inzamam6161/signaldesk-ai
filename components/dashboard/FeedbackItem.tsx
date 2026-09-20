@@ -41,7 +41,15 @@ export function FeedbackItem({
             {sentimentLabels[feedback.sentiment]}
           </span>
 
-          <span>AI confidence: {feedback.score}%</span>
+          <span>
+            Classification confidence: {feedback.score}%
+          </span>
+
+          {feedback.followUp && (
+            <span className="followUpBadge">
+              Follow-up
+            </span>
+          )}
         </div>
       </div>
 

@@ -1,12 +1,24 @@
-const navigationItems = [
-  { label: "Overview", icon: "⌂", active: true },
-  { label: "AI Insights", icon: "✦", active: false },
-  { label: "Feedback", icon: "◫", active: false },
-  { label: "Automations", icon: "⌁", active: false },
-  { label: "Reports", icon: "▥", active: false },
+import type { DashboardView } from "@/types/dashboard";
+
+const navigationItems: Array<{
+  id: DashboardView;
+  label: string;
+  icon: string;
+}> = [
+  { id: "overview", label: "Overview", icon: "⌂" },
+  { id: "feedback", label: "Feedback", icon: "◫" },
+  { id: "insights", label: "Insights", icon: "✦" },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  activeView: DashboardView;
+  onNavigate: (view: DashboardView) => void;
+}
+
+export function Sidebar({
+  activeView,
+  onNavigate,
+}: SidebarProps) {
   return (
     <aside className="sidebar">
       <div className="brand">
@@ -14,7 +26,7 @@ export function Sidebar() {
 
         <div>
           <strong>SignalDesk</strong>
-          <span>AI Intelligence</span>
+          <span>Customer Intelligence</span>
         </div>
       </div>
 
@@ -23,8 +35,14 @@ export function Sidebar() {
 
         {navigationItems.map((item) => (
           <button
-            className={`navigationItem ${item.active ? "active" : ""}`}
-            key={item.label}
+            aria-current={
+              activeView === item.id ? "page" : undefined
+            }
+            className={`navigationItem ${
+              activeView === item.id ? "active" : ""
+            }`}
+            key={item.id}
+            onClick={() => onNavigate(item.id)}
             type="button"
           >
             <span className="navigationIcon" aria-hidden="true">
@@ -41,18 +59,10 @@ export function Sidebar() {
           <span className="statusDot" />
 
           <div>
-            <strong>AI engine online</strong>
-            <span>All systems operational</span>
+            <strong>Analysis engine ready</strong>
+            <span>Evidence-based demo processing</span>
           </div>
         </div>
-
-        <button className="navigationItem" type="button">
-          <span className="navigationIcon" aria-hidden="true">
-            ⚙
-          </span>
-
-          <span>Settings</span>
-        </button>
       </div>
     </aside>
   );

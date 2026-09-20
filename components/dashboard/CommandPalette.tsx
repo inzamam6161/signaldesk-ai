@@ -1,4 +1,7 @@
-import type { Sentiment } from "@/types/dashboard";
+import type {
+  DashboardView,
+  Sentiment,
+} from "@/types/dashboard";
 
 type FeedbackFilter = "all" | Sentiment;
 
@@ -7,7 +10,9 @@ interface CommandPaletteProps {
   onClose: () => void;
   onClearSearch: () => void;
   onSelectFilter: (filter: FeedbackFilter) => void;
-  onShowFeedback: () => void;
+  onNavigate: (view: DashboardView) => void;
+  onAddFeedback: () => void;
+  onResetWorkspace: () => void;
 }
 
 export function CommandPalette({
@@ -15,7 +20,9 @@ export function CommandPalette({
   onClose,
   onClearSearch,
   onSelectFilter,
-  onShowFeedback,
+  onNavigate,
+  onAddFeedback,
+  onResetWorkspace,
 }: CommandPaletteProps) {
   if (!isOpen) {
     return null;
@@ -58,6 +65,58 @@ export function CommandPalette({
           <button
             onClick={() =>
               runCommand(() => {
+                onNavigate("feedback");
+                onAddFeedback();
+              })
+            }
+            type="button"
+          >
+            <span className="commandIcon">＋</span>
+            <span>
+              <strong>Add customer feedback</strong>
+              <small>
+                Add and automatically classify a conversation
+              </small>
+            </span>
+          </button>
+
+          <button
+            onClick={() =>
+              runCommand(() => onNavigate("insights"))
+            }
+            type="button"
+          >
+            <span className="commandIcon">✦</span>
+            <span>
+              <strong>Open insights</strong>
+              <small>
+                Review evidence-based customer themes
+              </small>
+            </span>
+          </button>
+
+          <button
+            onClick={() =>
+              runCommand(() => {
+                onNavigate("feedback");
+                onClearSearch();
+                onSelectFilter("negative");
+              })
+            }
+            type="button"
+          >
+            <span className="commandIcon">!</span>
+            <span>
+              <strong>Show customer risks</strong>
+              <small>
+                Filter the workspace to negative feedback
+              </small>
+            </span>
+          </button>
+
+          <button
+            onClick={() =>
+              runCommand(() => {
                 onClearSearch();
                 onSelectFilter("all");
               })
@@ -65,46 +124,24 @@ export function CommandPalette({
             type="button"
           >
             <span className="commandIcon">⌕</span>
-
             <span>
-              <strong>Reset feedback search</strong>
+              <strong>Reset search and filters</strong>
               <small>Show all customer conversations</small>
             </span>
           </button>
 
           <button
-            onClick={() => runCommand(() => onSelectFilter("positive"))}
+            onClick={() =>
+              runCommand(onResetWorkspace)
+            }
             type="button"
           >
-            <span className="commandIcon">↗</span>
-
+            <span className="commandIcon">↺</span>
             <span>
-              <strong>Show positive feedback</strong>
-              <small>Filter conversations by positive sentiment</small>
-            </span>
-          </button>
-
-          <button
-            onClick={() => runCommand(() => onSelectFilter("negative"))}
-            type="button"
-          >
-            <span className="commandIcon">!</span>
-
-            <span>
-              <strong>Show customer risks</strong>
-              <small>Display negative customer conversations</small>
-            </span>
-          </button>
-
-          <button
-            onClick={() => runCommand(onShowFeedback)}
-            type="button"
-          >
-            <span className="commandIcon">↓</span>
-
-            <span>
-              <strong>Open live feedback</strong>
-              <small>Jump to the customer feedback section</small>
+              <strong>Reset demo workspace</strong>
+              <small>
+                Remove locally added feedback and restore sample data
+              </small>
             </span>
           </button>
         </div>

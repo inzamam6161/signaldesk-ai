@@ -5,17 +5,22 @@ import type { Feedback } from "@/types/dashboard";
 interface FeedbackDrawerProps {
   feedback: Feedback | null;
   onClose: () => void;
+  onToggleFollowUp: (feedbackId: string) => void;
 }
 
 const recommendations = {
-  positive: "Share this feedback with the product team and request a review.",
-  neutral: "Create a follow-up task and investigate the reported friction.",
-  negative: "Escalate this conversation to customer success immediately.",
+  positive:
+    "Share the positive signal with the product team and capture what is working.",
+  neutral:
+    "Review the reported friction and decide whether a product follow-up is needed.",
+  negative:
+    "Prioritize a follow-up and investigate the customer-reported issue.",
 };
 
 export function FeedbackDrawer({
   feedback,
   onClose,
+  onToggleFollowUp,
 }: FeedbackDrawerProps) {
   useEffect(() => {
     if (!feedback) {
@@ -92,13 +97,15 @@ export function FeedbackDrawer({
         <section className="drawerStats">
           <div>
             <span>Sentiment</span>
-            <strong className={`drawerSentiment ${feedback.sentiment}`}>
+            <strong
+              className={`drawerSentiment ${feedback.sentiment}`}
+            >
               {feedback.sentiment}
             </strong>
           </div>
 
           <div>
-            <span>AI confidence</span>
+            <span>Classification confidence</span>
             <strong>{feedback.score}%</strong>
           </div>
 
@@ -109,22 +116,29 @@ export function FeedbackDrawer({
         </section>
 
         <section className="drawerAiSummary">
-          <div className="aiIcon">✦</div>
+          <div className="aiIcon">✓</div>
 
           <div>
-            <span className="drawerLabel">AI recommendation</span>
+            <span className="drawerLabel">Suggested action</span>
             <p>{recommendations[feedback.sentiment]}</p>
           </div>
         </section>
 
         <div className="drawerActions">
-          <button className="secondaryButton" type="button">
-            Add to report
-          </button>
-
-          <button className="primaryButton" type="button">
-            Create follow-up
-            <span aria-hidden="true">→</span>
+          <button
+            className={
+              feedback.followUp
+                ? "primaryButton"
+                : "secondaryButton"
+            }
+            onClick={() =>
+              onToggleFollowUp(feedback.id)
+            }
+            type="button"
+          >
+            {feedback.followUp
+              ? "✓ Follow-up tracked"
+              : "Create follow-up"}
           </button>
         </div>
       </aside>

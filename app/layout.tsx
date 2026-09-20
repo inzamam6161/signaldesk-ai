@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SignalDesk AI",
-  description: "AI-powered customer intelligence dashboard",
+  title: "SignalDesk — Customer Intelligence",
+  description:
+    "A customer-intelligence dashboard with searchable feedback, local workspace persistence, evidence-based analysis, sentiment classification and follow-up tracking.",
 };
 
 export default function RootLayout({

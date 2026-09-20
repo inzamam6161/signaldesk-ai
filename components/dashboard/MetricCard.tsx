@@ -9,17 +9,20 @@ export function MetricCard({ metric }: MetricCardProps) {
     <article className="metricCard">
       <div className="metricHeader">
         <span>{metric.label}</span>
-        <button aria-label={`More options for ${metric.label}`} type="button">
-          •••
-        </button>
       </div>
 
-      <strong className="metricValue">{metric.value}</strong>
+      <strong className="metricValue">
+        {metric.value}
+      </strong>
 
       <div className="metricFooter">
         <span
           className={`metricChange ${
-            metric.trend === "down" ? "negative" : ""
+            metric.trend === "down"
+              ? "negative"
+              : metric.trend === "neutral"
+                ? "neutral"
+                : ""
           }`}
         >
           {metric.change}
